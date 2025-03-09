@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+</head>
+
+<body>
+    <h1>Order #{{ order.id }}</h1>
+    <p>Total Amount: ${{ order.total_amount }}</p>
+
+
+    {% csrf_token %}
+    {{ paypal_form.render }} <!-- Hiển thị nút thanh toán PayPal -->
+
+</body>
+
+</html>

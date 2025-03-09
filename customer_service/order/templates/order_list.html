@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-primary">Order List</h1>
+    <div class="card shadow-lg">
+        <div class="card-body">
+            {% if not orders %}
+            <p class="text-center text-muted">No orders available.</p>
+            {% else %}
+            <table class="table table-hover table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Status</th>
+                        <th>Total Price</th>
+                        <th>Payment Status</th>
+                        <th>Shipping Status</th>
+                        <th>Created At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td style="vertical-align: middle;">{{ order.id }}</td>
+                        <td style="vertical-align: middle;">
+                            <span class="badge 
+                                {% if order.status == 'pending' %} bg-warning 
+                                {% elif order.status == 'completed' %} bg-success 
+                                {% elif order.status == 'cancelled' %} bg-danger 
+                                {% else %} bg-secondary {% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                        <td style="vertical-align: middle;" class="fw-bold text-success">
+                            ${{ order.total_amount|floatformat:2 }}</td>
+                        </td>
+                        <td style="vertical-align: middle;">
+                            <span class="badge 
+                                {% if order.payment_status == 'unpaid' %} bg-secondary
+                                {% elif order.payment_status == 'paid' %} bg-success 
+                                {% elif order.payment_status == 'refunded' %} bg-warning-subtle 
+                                {% else %} bg-secondary {% endif %}">
+                                {{ order.payment_status }}
+                            </span>
+                            {% if order.payment_status == 'unpaid' %}
+                            <a href="{% url 'view_order_detail' order.id %}" class="d-block mt-2">Pay Now</a>
+                            {% elif order.payment_status == 'paid' %}
+                            <a href="{% url 'payment_detail' order.id %}" class="d-block mt-2">View payment</a>
+                            {% endif %}
+                        </td>
+                        <td style="vertical-align: middle;">
+                            <span class="badge 
+                            {% if order.shipping_status == 'delivered' %}bg-success
+                            {% elif order.shipping_status == 'shipped' %}bg-info
+                            {% elif order.shipping_status == 'waiting' %}bg-warning
+                            {% else %}bg-danger{% endif %}">
+                                {{ order.shipping_status }}
+                            </span>
+                            <a href="{% url 'shipment_detail' order.id %}" class="d-block mt-2">See details</a>
+                        </td>
+                        <td style="vertical-align: middle;">{{ order.created_at }}</td>
+                        <td style="vertical-align: middle;">
+                            <a href="{% url 'view_order_detail' order.id %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-search"></i>
+                                Details
+                            </a>
+                            {% if order.payment_status == 'unpaid' %}
+                            <form action="{% url 'cancel_order' order.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-danger mt-1"
+                                    onclick="return confirm('Are you sure you want to cancel Order #{{ order.id }}?')">
+                                    <i class="bi bi-x-circle"></i>
+                                    Cancel
+                                </button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

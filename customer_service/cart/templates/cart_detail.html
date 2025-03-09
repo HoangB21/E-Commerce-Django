@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<div class="container mt-4 min-vh-100">
+    <h2 class="text-center">Your Shopping Cart</h2>
+    <hr>
+
+    {% if cart and cart.items %}
+    <ul class="list-group">
+        {% for item in cart.items %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+                {% if item.product_details.image %}
+                <img src="{{ item.product_details.image }}" alt="{{ item.product_details.title }}"
+                    class="img-thumbnail me-3" style="width: 128px; height: 128px; object-fit:contain;">
+                {% endif %}
+                <div>
+                    <h5>{{ item.product_details.name }}</h5>
+                    <p>Price: ${{ item.product_details.price }}</p>
+                    <div class="d-flex align-items-center">
+                        <span class="me-2">Quantity:</span>
+                        <form action="{% url 'update_cart_item' item.product_id %}" method="post"
+                            class="d-flex align-items-center">
+                            {% csrf_token %}
+                            <input type="hidden" name="service_name" value="{{ item.service_name }}">
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+                                class="form-control form-control-sm me-2 text-center" style="width: 64px;">
+                            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <span class="badge bg-primary rounded-pill">${{ item.total }}</span>
+                <form action="{% url 'remove_cart_item' item.product_id %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <input type="hidden" name="service_name" value="{{ item.service_name }}">
+                    <button type="submit" class="btn btn-danger btn-sm"> <i class="bi bi-trash"></i> Remove</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    <hr>
+    <h4 class="text-end">Total: ${{ cart.total_price }}</h4>
+    <div class="text-end mt-3">
+        <a href="{% url 'proceed_to_checkout' %}" class="btn btn-success">Proceed to Checkout</a>
+    </div>
+    {% else %}
+    <p class="text-center">Your cart is empty!</p>
+    {% endif %}
+</div>
+{% endblock %}

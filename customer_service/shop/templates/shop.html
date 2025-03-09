@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}EzBuy - Shop{% endblock %}
+
+{% block content %}
+<div class="shop-container">
+    <div class="shop-header">
+        <h1>Explore Our Shop</h1>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for category in categories %}
+        <div class="col">
+            <div class="category-card">
+                <img src="{{ category.image }}" alt="{{ category.name }}" class="card-img-top">
+                <div class="category-card-body">
+                    <h5 class="category-card-title">{{ category.name }}</h5>
+                    <p class="category-card-desc">{{ category.description }}</p>
+                    <a href="/shop/{{ category.slug }}/" class="btn-explore text-decoration-none">Explore Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .shop-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .shop-header {
+        text-align: center;
+        margin-bottom: 50px;
+        color: #2c3e50;
+    }
+
+    .shop-header h1 {
+        font-size: 2.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        background: linear-gradient(to right, #3498db, #e74c3c);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .category-card {
+        background: white;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+    }
+
+    .category-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .category-card img {
+        width: 100%;
+        height: 300px;
+        object-fit: contain;
+        border-bottom: 1px solid #eee;
+    }
+
+    .category-card-body {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .category-card-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 10px;
+    }
+
+    .category-card-desc {
+        font-size: 1rem;
+        color: #7f8c8d;
+        margin-bottom: 15px;
+    }
+
+    .btn-explore {
+        background: linear-gradient(90deg, #3498db, #2980b9);
+        border: none;
+        padding: 10px 25px;
+        font-size: 1.1rem;
+        border-radius: 25px;
+        color: white;
+        transition: background 0.3s, transform 0.2s;
+    }
+
+    .btn-explore:hover {
+        background: linear-gradient(90deg, #2980b9, #1f6391);
+        transform: scale(1.05);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4 text-center text-primary">Order Detail</h1>
+
+    <!-- Order Information -->
+    <div class="card shadow-lg mb-4" style="display: flex; flex-direction: row;">
+        <div class="card-body">
+            <h4 class="card-title">Order Information</h4>
+            <p><strong>Order ID:</strong> {{ order.id }}</p>
+            <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+            <p><strong>Total Price:</strong> <span class="text-success fw-bold">${{ order.total_amount }}</span></p>
+            <p><strong>Status:</strong> <span class="badge bg-warning text-dark">{{ order.status }}</span></p>
+            <p><strong>Payment Status:</strong> <span class="badge bg-secondary">{{ order.payment_status }}</span></p>
+            <p><strong>Shipping Status:</strong>
+                <span class="badge bg-info text-white">{{ order.shipping_status }}</span>
+            </p>
+        </div>
+        {% if order.payment_status == 'unpaid' %}
+        <!-- Payment Method -->
+        <div class="card-body">
+            <h4 class="card-title">Payment Method</h4>
+            <form action="{% url 'initiate_payment' order.id %}" method="post">
+                {% csrf_token %}
+                <img src="{% static '/images/paypal.png' %}" alt="Bank" width="40" class="me-2">
+                <button type="submit" class="btn btn-primary">Pay with PayPal</button>
+            </form>
+        </div>
+        {% elif order.payment_status == 'paid' %}
+        <div class="alert alert-success text-center" role="alert">
+            <h4 class="alert-heading">Payment Successful!</h4>
+            <p>Thank you for your purchase. Your order is being processed.</p>
+            <a href="{% url 'payment_detail' order.id %}" class="btn btn-primary">View payment details</a>
+        </div>
+        {% else %}
+        <div class="alert alert-danger text-center" role="alert">
+            <h4 class="alert-heading">Payment Failed!</h4>
+            <p>This order has been canceled</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Order Items -->
+    <div class="card shadow-lg mb-4">
+        <div class="card-body">
+            <h4 class="card-title">Order Items</h4>
+            <table class="table table-bordered text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Unit Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items %}
+                    <tr>
+                        <td style="vertical-align: middle;">{{ forloop.counter }}</td>
+                        <td class="d-flex align-items-center" style="vertical-align: middle;">
+                            <img src="{{ item.product_details.image }}" alt="{{ item.product_details.name }}"
+                                class="me-2" width="128" height="256" style="object-fit:contain; border-radius: 5px;">
+                            <h5>{{ item.product_details.name }}</h5>
+                        </td>
+                        <td style="vertical-align: middle;">{{ item.quantity }}</td>
+                        <td style="vertical-align: middle;">${{ item.price|floatformat:2 }}</td>
+                        <td style="vertical-align: middle;" class="fw-bold text-success">
+                            ${{ item.total_price|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load form_tags %}
+{% block title %}Register Account{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Register Account</h3>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {{ user_form.non_field_errors }}
+                    {{ address_form.non_field_errors }}
+
+                    <!-- Thông tin tài khoản -->
+                    <h5>Account Information</h5>
+
+                    <!-- First Name & Last Name -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_first_name" class="form-label">First Name</label>
+                            {{ user_form.first_name|add_class:"form-control" }}
+                            {% if user_form.first_name.errors %}
+                            <div class="text-danger">{{ user_form.first_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_last_name" class="form-label">Last Name</label>
+                            {{ user_form.last_name|add_class:"form-control" }}
+                            {% if user_form.last_name.errors %}
+                            <div class="text-danger">{{ user_form.last_name.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Username & Date of Birth -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_username" class="form-label">Username</label>
+                            {{ user_form.username|add_class:"form-control" }}
+                            {% if user_form.username.errors %}
+                            <div class="text-danger">{{ user_form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_date_of_birth" class="form-label">Date of Birth</label>
+                            {{ user_form.date_of_birth|add_class:"form-control" }}
+                        </div>
+                    </div>
+
+                    <!-- Email & Phone Number -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_email" class="form-label">Email</label>
+                            {{ user_form.email|add_class:"form-control" }}
+                            {% if user_form.email.errors %}
+                            <div class="text-danger">{{ user_form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_phone" class="form-label">Phone Number</label>
+                            {{ user_form.phone|add_class:"form-control" }}
+                            {% if user_form.phone.errors %}
+                            <div class="text-danger">{{ user_form.phone.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Mật khẩu -->
+                    <h5>Password</h5>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_password1" class="form-label">Password</label>
+                            {{ user_form.password1|add_class:"form-control" }}
+                            {% if user_form.password1.errors %}
+                            <div class="text-danger">{{ user_form.password1.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_password2" class="form-label">Confirm Password</label>
+                            {{ user_form.password2|add_class:"form-control" }}
+                            {% if user_form.password2.errors %}
+                            <div class="text-danger">{{ user_form.password2.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Thông tin địa chỉ -->
+                    <h5>Address Information</h5>
+
+                    <!-- House Number & Street -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_house_number" class="form-label">House Number</label>
+                            {{ address_form.house_number|add_class:"form-control" }}
+                            {% if address_form.house_number.errors %}
+                            <div class="text-danger">{{ address_form.house_number.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_street" class="form-label">Street</label>
+                            {{ address_form.street|add_class:"form-control" }}
+                            {% if address_form.street.errors %}
+                            <div class="text-danger">{{ address_form.street.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- District & City -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="id_district" class="form-label">District</label>
+                            {{ address_form.district|add_class:"form-control" }}
+                            {% if address_form.district.errors %}
+                            <div class="text-danger">{{ address_form.district.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label for="id_city" class="form-label">City</label>
+                            {{ address_form.city|add_class:"form-control" }}
+                            {% if address_form.city.errors %}
+                            <div class="text-danger">{{ address_form.city.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Country -->
+                    <div class="mb-3">
+                        <label for="id_country" class="form-label">Country</label>
+                        {{ address_form.country|add_class:"form-control" }}
+                        {% if address_form.country.errors %}
+                        <div class="text-danger">{{ address_form.country.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

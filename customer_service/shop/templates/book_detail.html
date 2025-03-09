@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% block title %}EzBuy - {{ book.name }}{% endblock %}
+
+{% block content %}
+<a href="{% url 'book_list' %}" class="btn btn-back text-white mt-3 ms-2">Back to List</a>
+
+<div class="detail-container">
+    <div class="row g-4">
+        <!-- Cột hình ảnh -->
+        <div class="col-md-5">
+            {% if book.image %}
+            <img src="{{ book.image }}" alt="{{ book.name }}" class="book-image">
+            {% else %}
+            <img src="https://via.placeholder.com/400x400?text=No+Image" alt="No Image" class="book-image">
+            {% endif %}
+        </div>
+        <!-- Cột thông tin -->
+        <div class="col-md-7">
+            <h1 class="book-title">{{ book.name }}</h1>
+            <p class="book-author">by {{ book.author }}</p>
+            <p class="book-price">${{ book.price|floatformat:2 }}</p>
+            <p class="stock-info {% if book.stock > 0 %}in-stock{% else %}out-of-stock{% endif %}">
+                {% if book.stock > 0 %}
+                In Stock: {{ book.stock }} units available
+                {% else %}
+                Out of Stock
+                {% endif %}
+            </p>
+            <ul class="spec-list">
+                <li><strong>Category:</strong> {{ book.category_name }}</li>
+                <li><strong>Publication Date:</strong> {{ book.publication_date }}</li>
+                <li><strong>Description:</strong> {{ book.description }}</li>
+            </ul>
+            {% if book.stock > 0 %}
+            <form method="post" action="{% url 'add_to_cart' %}" class="mt-auto">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ book.id }}">
+                <input type="hidden" name="service_name" value="book">
+                <div class="d-flex flex-row justify-content-end">
+                    <input type="number" name="quantity" value="1" min="1" max="{{ book.stock }}"
+                        class="form-control me-2 text-center" style="width: 80px;">
+                    <button type="submit" class="btn btn-success">Add to Cart</button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .detail-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .book-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .book-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .book-author {
+        font-size: 1.2rem;
+        color: #7f8c8d;
+        margin-bottom: 20px;
+    }
+
+    .book-price {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #e74c3c;
+        margin-bottom: 20px;
+    }
+
+    .spec-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .spec-list li {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 1.1rem;
+        color: #34495e;
+    }
+
+    .spec-list li strong {
+        color: #2c3e50;
+    }
+
+    .btn-add-cart {
+        background-color: #27ae60;
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.2rem;
+        border-radius: 25px;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .btn-add-cart:hover {
+        background-color: #219653;
+        transform: scale(1.05);
+    }
+
+    .btn-back {
+        background-color: #6c757d;
+        border: none;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 25px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-back:hover {
+        background-color: #5a6268;
+    }
+
+    .stock-info {
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    .in-stock {
+        color: #27ae60;
+    }
+
+    .out-of-stock {
+        color: #e74c3c;
+    }
+</style>
+{% endblock %}

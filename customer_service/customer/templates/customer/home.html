@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<style>
+    .banner-container {
+        background: url("/static/images/banner.jpg") center/cover no-repeat;
+        height: 64vh;
+        position: relative;
+        color: white;
+    }
+
+    .banner-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        /* background: rgba(0, 0, 0, 0.5); */
+        /* Overlay màu đen mờ */
+    }
+
+    .banner-content {
+        z-index: 1;
+        max-width: 720px;
+        background-color: rgba(52, 44, 44, 0.9);
+        border-radius: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
+
+    }
+
+    .banner-content h1 {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    }
+
+    .banner-content p {
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+</style>
+<div class="container mt-4">
+    <!-- Banner Section -->
+    <div class="banner-container text-center text-white d-flex align-items-center justify-content-center">
+        <div class="banner-content">
+            <img src="{% static '/images/logo.png' %}" alt="EzBuy" width="512" />
+            <h1 class="display-4 fw-bold">Welcome to EzBuy!</h1>
+            <p class="lead">Where Shopping Feels Effortless!</p>
+            <a class="shopnow-btn d-flex align-items-center justify-content-center"
+                style="text-decoration: none; color: rgb(77, 77, 77);" href="{% url 'shop' %}">
+                <h4 style="background: #65e2a0; width: fit-content; padding: 10px; border-radius: 20px;">Shop now</h4>
+            </a>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
