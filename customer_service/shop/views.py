@@ -5,8 +5,23 @@ from django.templatetags.static import static
 
 logger = logging.getLogger(__name__)
 
-MOBILE_SERVICE_URL = "http://127.0.0.1:8001/api/mobiles/"
-BOOK_SERVICE_URL = "http://127.0.0.1:8000/api/books/"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Kiểm tra nếu đang chạy trong Docker
+def is_running_in_docker():
+    return os.path.exists('/.dockerenv') or os.getenv('RUNNING_IN_DOCKER') == 'true'
+
+# Tự động chọn URL phù hợp
+if is_running_in_docker():
+    MOBILE_SERVICE_URL = os.getenv('MOBILE_SERVICE_URL_DOCKER')
+    BOOK_SERVICE_URL = os.getenv('BOOK_SERVICE_URL_DOCKER')
+else:
+    MOBILE_SERVICE_URL = os.getenv('MOBILE_SERVICE_URL_LOCAL')
+    BOOK_SERVICE_URL = os.getenv('BOOK_SERVICE_URL_LOCAL')
+
 
 def shop(request):
     categories = [

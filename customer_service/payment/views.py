@@ -3,7 +3,7 @@ from django.http import JsonResponse
 import requests
 import logging
 
-PAYMENT_SERVICE_URL='http://127.0.0.1:7002/api/payments/'
+PAYMENT_SERVICE_URL='http://payment_service:7002/api/payments/'
 
 def checkout(request):
     """
@@ -11,7 +11,7 @@ def checkout(request):
     """
     customer_id = request.user.id
     response = requests.post(
-        "http://127.0.0.1:7001/api/orders/",
+        "http://order_service:7001/api/orders/",
         json={"customer_id": customer_id}
     )
     print(response.json())

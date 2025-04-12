@@ -25,6 +25,12 @@ class PaymentDetailView(APIView):
             logger.error("Error fetching payment for order_id %s: %s", order_id, str(e))
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+def get_ngrok_url():
+    response = requests.get("http://ngrok:4040/api/tunnels")
+    tunnels = response.json()["tunnels"]
+    print("Tunnels:", tunnels[0]["public_url"])
+    return tunnels[0]["public_url"] if tunnels else None
+
 class InitiatePaymentView(APIView):
     def post(self, request):
         # Lấy order_id trực tiếp từ request.data
@@ -35,7 +41,7 @@ class InitiatePaymentView(APIView):
                           status=status.HTTP_400_BAD_REQUEST)
 
         # Gọi API tới order_service để lấy thông tin đơn hàng
-        order_service_url = f"http://127.0.0.1:7001/api/orders/{order_id}/"
+        order_service_url = f"http://order_service:7001/api/orders/{order_id}/"
         try:
             response = requests.get(order_service_url)
             response.raise_for_status()  # Ném lỗi nếu request thất bại
@@ -55,9 +61,9 @@ class InitiatePaymentView(APIView):
             "item_name": f"Order #{order_id}",
             "invoice": order_id,
             "currency_code": "USD",
-            "notify_url": "https://6b1f-2a09-bac1-7a80-50-00-246-5b.ngrok-free.app/api/payments/paypal-ipn/",
-            "return_url": "http://127.0.0.1:9000/payment/success/",
-            "cancel_return": "http://127.0.0.1:9000/payment/cancel/",
+            "notify_url": f"{get_ngrok_url()}/api/payments/paypal-ipn/",
+            "return_url": "http://customer_service:9000/payment/success/",
+            "cancel_return": "http://customer_service:9000/payment/cancel/",
         }
     
         form = PayPalPaymentsForm(initial=paypal_dict)
@@ -95,7 +101,7 @@ def paypal_payment_received(sender, **kwargs):
         # Công việc 3: Gọi API tạo shipment
         shipment_data = {"order_id": order_id, "status": "waiting"}
         try:
-            response = requests.post("http://127.0.0.1:7003/api/shipments/create/", json=shipment_data)
+            response = requests.post("http://shipment_service:7003/api/shipments/create/", json=shipment_data)
             response.raise_for_status()
             logger.info("Shipment created for order %s", order_id)
         except requests.exceptions.RequestException as e:
@@ -107,7 +113,7 @@ def paypal_payment_received(sender, **kwargs):
 
 def create_payment_from_order(order_id):
     # URL API của order_service
-    order_service_url = f"http://127.0.0.1:7001/api/orders/detail/{order_id}/"
+    order_service_url = f"http://order_service:7001/api/orders/detail/{order_id}/"
     
     try:
         # Gọi API để lấy chi tiết đơn hàng
@@ -149,7 +155,7 @@ def create_payment_from_order(order_id):
 
 def update_order_payment_status(order_id):
     # URL API của order_service để cập nhật
-    order_service_url = f"http://127.0.0.1:7001/api/orders/{order_id}/"
+    order_service_url = f"http://order_service:7001/api/orders/{order_id}/"
     
     # Payload để cập nhật payment_status
     payload = {

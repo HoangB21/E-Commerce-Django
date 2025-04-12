@@ -25,7 +25,7 @@ SECRET_KEY = 'r)ffu=6l%lziybmxjz5_8jzad3d!=9n_=+ma-$j$eukk1(6^vs'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -74,6 +74,12 @@ WSGI_APPLICATION = 'order_service.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+import os
+
+
+def is_running_in_docker():
+    print("Checking if running in Docker...", os.path)
+    return os.path.exists('/.dockerenv') or os.getenv('RUNNING_IN_DOCKER') == 'true'
 
 DATABASES = {
     'default': {
@@ -81,7 +87,7 @@ DATABASES = {
         'NAME': 'order_db',
         'USER': 'user',
         'PASSWORD': 'password',
-        'HOST': '127.0.0.1',
+        'HOST': 'postgres_db' if is_running_in_docker() else 'localhost',
         'PORT': '5432',
     }
 }

@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-l0&%(-vt947nmy(466hj_29ku$2@0e7$h6(&q9@^d_wa-rw0xm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -75,12 +75,25 @@ WSGI_APPLICATION = "book_service.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'NAME': 'book_db',
+#         'CLIENT': {
+#             'host': 'localhost:27017',  # Nếu chạy local
+#         }
+#     }
+# }
+
+import os
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'book_db',
+        'ENFORCE_SCHEMA': False,
         'CLIENT': {
-            'host': '0.0.0.0:27017',  # Nếu chạy Docker
+            'host': os.getenv('DATABASE_URL', 'mongodb://mongodb:27017/book_db'), # Nếu chạy trên Docker
         }
     }
 }

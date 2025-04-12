@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+from cart_service.utils import is_running_in_docker
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +27,7 @@ SECRET_KEY = "django-insecure-rquq3os=(!1ar4uv^q4@=0=^f7jx!ur5uybm^-z2#ywu*um1r&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -81,7 +83,7 @@ DATABASES = {
         'NAME': 'cart_db',
         'USER': 'user',
         'PASSWORD': 'password',
-        'HOST': '127.0.0.1',
+        'HOST': 'postgres_db' if is_running_in_docker() else 'localhost',
         'PORT': '5432',
     }
 }

@@ -11,7 +11,7 @@ class BookSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Book
-        fields = ['id', 'name', 'author', 'price', 'stock', 'image', 'category', 'category_name', 'publication_date', 'description', 'service']
+        fields = ['id', 'name', 'author', 'price', 'stock', 'image_url', 'category', 'category_name', 'publication_date', 'description', 'service']
 
     def get_category_name(self, obj):
         return obj.category.name if obj.category else None

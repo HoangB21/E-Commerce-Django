@@ -57,7 +57,7 @@ class ShipmentUpdateView(APIView):
                     logger.info("Shipment updated for order_id %s to status %s", order_id, serializer.data['status'])
 
                     # Gọi API đến order_service
-                    order_service_url = f"http://127.0.0.1:7001/api/orders/{order_id}/"
+                    order_service_url = f"http://order_service:7001/api/orders/{order_id}/"
                     order_payload = {"shipping_status": serializer.validated_data['status']}
                     response = requests.patch(order_service_url, json=order_payload, timeout=5)
                     if not response.ok:  # Kiểm tra lỗi

@@ -38,6 +38,15 @@
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
                             Hello, {{ user.first_name }}!
+                            {% if user.customer_type %}
+                            <span class="badge ms-2 
+                                    {% if user.customer_type == 'VIP' %}bg-danger
+                                    {% elif user.customer_type == 'LOYAL' %}bg-success
+                                    {% elif user.customer_type == 'REGULAR' %}bg-primary
+                                    {% else %}bg-secondary{% endif %}">
+                                {{ user.get_customer_type_display }}
+                            </span>
+                            {% endif %}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li>

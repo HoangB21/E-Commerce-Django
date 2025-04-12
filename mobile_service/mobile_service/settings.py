@@ -25,7 +25,7 @@ SECRET_KEY = '+eih+*%qv^new(_1r&$td0vg#p1e2d#+zvnej49vh&1z)#@k!3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -75,13 +75,16 @@ WSGI_APPLICATION = 'mobile_service.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+import os
+def is_running_in_docker():
+    print("Checking if running in Docker...", os.path)
+    return os.path.exists('/.dockerenv') or os.getenv('RUNNING_IN_DOCKER') == 'true'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'mobile_db',
         'CLIENT': {
-            'host': '0.0.0.0:27017', 
+            'host': 'mongodb://mongodb:27017/book_db' if is_running_in_docker() else '0.0.0.0:27017', 
         }
     }
 }

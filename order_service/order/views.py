@@ -5,12 +5,28 @@ from rest_framework.decorators import action
 from .models import Order, OrderItem
 from .serializers import OrderSerializer
 
-CART_SERVICE_URL = 'http://127.0.0.1:7000/api/carts/'  # Địa chỉ service cart
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Kiểm tra nếu đang chạy trong Docker
+def is_running_in_docker():
+    return os.path.exists('/.dockerenv') or os.getenv('RUNNING_IN_DOCKER') == 'true'
+
+# Tự động chọn URL phù hợp
+if is_running_in_docker():
+    MOBILE_SERVICE_URL = os.getenv('MOBILE_SERVICE_URL_DOCKER')
+    BOOK_SERVICE_URL = os.getenv('BOOK_SERVICE_URL_DOCKER')
+    CART_SERVICE_URL= os.getenv('CART_SERVICE_URL_DOCKER')
+else:
+    MOBILE_SERVICE_URL = os.getenv('MOBILE_SERVICE_URL_LOCAL')
+    BOOK_SERVICE_URL = os.getenv('BOOK_SERVICE_URL_LOCAL')
+    CART_SERVICE_URL= os.getenv('CART_SERVICE_URL_LOCAL')
 
 SERVICE_APIS = {
-    "book": "http://127.0.0.1:8000/api/books/",
-    "clothes": "http://127.0.0.1:8002/api/clothes/",
-    "mobile": "http://127.0.0.1:8001/api/mobiles/",
+    "book": BOOK_SERVICE_URL,
+    "mobile": MOBILE_SERVICE_URL,
 }
 
 class OrderViewSet(viewsets.ModelViewSet):

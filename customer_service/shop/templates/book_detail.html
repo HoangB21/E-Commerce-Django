@@ -8,8 +8,8 @@
     <div class="row g-4">
         <!-- Cột hình ảnh -->
         <div class="col-md-5">
-            {% if book.image %}
-            <img src="{{ book.image }}" alt="{{ book.name }}" class="book-image">
+            {% if book.image_url %}
+            <img src="{{ book.image_url }}" alt="{{ book.name }}" class="book-image">
             {% else %}
             <img src="https://via.placeholder.com/400x400?text=No+Image" alt="No Image" class="book-image">
             {% endif %}
@@ -43,6 +43,7 @@
                 </div>
             </form>
             {% endif %}
+            <a href="{% url 'comment_page' 'books' book.id %}" class="btn btn-primary mt-3">See Comments</a>
         </div>
     </div>
 </div>

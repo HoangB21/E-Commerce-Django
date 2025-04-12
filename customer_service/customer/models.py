@@ -6,12 +6,21 @@ class Address(models.Model):
     street = models.CharField(max_length=255)  # Đường
     district = models.CharField(max_length=100)  # Quận/Huyện
     city = models.CharField(max_length=100)  # Tỉnh/Thành phố
-    country = models.CharField(max_length=100, default="Vietnam")  # Quốc gia (mặc định là Việt Nam)
+    country = models.CharField(max_length=100, default="Vietnam")  # Quốc gia
 
     def __str__(self):
         return f"{self.house_number} {self.street}, {self.district}, {self.city}, {self.country}"
 
 class Customer(AbstractUser):
+    # Định nghĩa các loại khách hàng
+    CUSTOMER_TYPES = (
+        ('GUEST', 'Guest'),
+        ('ONE_TIME', 'One-time'),
+        ('REGULAR', 'Regular'),
+        ('LOYAL', 'Loyal'),
+        ('VIP', 'VIP'),
+    )
+
     # Mối quan hệ One-to-One với Address
     address = models.OneToOneField(Address, on_delete=models.SET_NULL, null=True, blank=True)
     
@@ -19,15 +28,22 @@ class Customer(AbstractUser):
     phone = models.CharField(max_length=15, unique=True)
     date_of_birth = models.DateField(null=True, blank=True)
     
+    # Thêm trường customer_type
+    customer_type = models.CharField(
+        max_length=20,
+        choices=CUSTOMER_TYPES,
+        default='GUEST',  # Mặc định là khách hàng mua 1 lần
+    )
+
     # Định nghĩa lại các trường quan hệ để tránh xung đột với AbstractUser
     groups = models.ManyToManyField(
         "auth.Group",
-        related_name="customer_users",  # Đặt tên khác cho related_name
+        related_name="customer_users",
         blank=True
     )
     user_permissions = models.ManyToManyField(
         "auth.Permission",
-        related_name="customer_users_permissions",  # Đặt tên khác cho related_name
+        related_name="customer_users_permissions",
         blank=True
     )
 

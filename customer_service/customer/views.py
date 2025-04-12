@@ -3,7 +3,56 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .forms import CustomerRegistrationForm, AddressForm
-import requests
+from .models import Customer
+from rest_framework.response import Response
+from .serializers import CustomerSerializer
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+
+class CustomerViewSet(viewsets.ModelViewSet):
+    queryset = Customer.objects.all()
+    serializer_class = CustomerSerializer
+
+    def get_permissions(self):
+        # Chỉ admin mới được phép xem danh sách và xóa
+        if self.action in ['list', 'destroy']:
+            return [IsAdminUser()]
+        # Người dùng đã đăng nhập có thể xem chi tiết, tạo, cập nhật
+        return [IsAuthenticated()]
+
+    def get_queryset(self):
+        # Nếu là admin, trả về tất cả customer
+        if self.request.user.is_staff:
+            return Customer.objects.all()
+        # Nếu không phải admin, chỉ trả về thông tin của chính user
+        return Customer.objects.filter(id=self.request.user.id)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # Chỉ cho phép user cập nhật chính họ hoặc admin
+        if instance.id != request.user.id and not request.user.is_staff:
+            return Response({"detail": "You do not have permission to update this customer."}, 
+                           status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 def register(request):
     if request.user.is_authenticated:

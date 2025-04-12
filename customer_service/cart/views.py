@@ -2,7 +2,19 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 import requests
 
-CART_SERVICE_URL = f"http://127.0.0.1:7000/api/carts/"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Kiểm tra nếu đang chạy trong Docker
+def is_running_in_docker():
+    return os.path.exists('/.dockerenv') or os.getenv('RUNNING_IN_DOCKER') == 'true'
+
+if is_running_in_docker():
+    CART_SERVICE_URL = os.getenv('CART_SERVICE_URL_DOCKER')
+else:
+    CART_SERVICE_URL = os.getenv('CART_SERVICE_URL_LOCAL')
 
 def view_cart(request):
     """Hiển thị giỏ hàng bằng cách gọi API từ cart_service"""
@@ -10,8 +22,8 @@ def view_cart(request):
 
     try:
         # Gọi API từ cart_service để lấy toàn bộ thông tin giỏ hàng
+        print("api", f"{CART_SERVICE_URL}customer/{customer_id}/")
         cart_response = requests.get(f"{CART_SERVICE_URL}customer/{customer_id}/")
-        
         if cart_response.status_code != 200:
             messages.error(request, "Không thể lấy giỏ hàng.")
             return render(request, "cart_detail.html", {"cart": None})

@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+from customer_service.utils import is_running_in_docker
+import os
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,11 +41,13 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    'rest_framework.authtoken',
     "customer",
     "cart",
     "order",
     "payment",
-    "shop"
+    "shop",
+    "comment",
 ]
 
 MIDDLEWARE = [
@@ -79,14 +84,21 @@ WSGI_APPLICATION = "customer_service.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# Tự động xác định môi trường
+if is_running_in_docker():
+    MYSQL_HOST = os.getenv('MYSQL_HOST_DOCKER', 'mysql')
+else:
+    MYSQL_HOST = os.getenv('MYSQL_HOST_LOCAL', '127.0.0.1')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'customer_db',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'NAME': os.getenv('MYSQL_DATABASE', 'customer_db'),
+        'USER': os.getenv('MYSQL_USER', 'user'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'password'),
+        'HOST': MYSQL_HOST,
+        'PORT': os.getenv('MYSQL_PORT', '3306'),
     }
 }
 
@@ -143,5 +155,5 @@ MESSAGE_TAGS = {
     messages.INFO: "info",
     messages.SUCCESS: "success",
     messages.WARNING: "warning",
-    messages.ERROR: "danger",  # Chuyển "error" thành "danger"
+    messages.ERROR: "danger",  
 }

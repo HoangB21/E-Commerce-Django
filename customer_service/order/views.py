@@ -5,8 +5,19 @@ import logging
 from customer_service.utils import format_datetime
 
 
-ORDER_SERVICE_URL = 'http://127.0.0.1:7001/api/orders/'
-PAYMENT_SERVICE_URL = "http://127.0.0.1:7002/api/payments"
+import os
+
+# Kiểm tra nếu đang chạy trong Docker
+def is_running_in_docker():
+    return os.path.exists('/.dockerenv') or os.getenv('RUNNING_IN_DOCKER') == 'true'
+
+# Tự động chọn URL phù hợp
+if is_running_in_docker():
+    ORDER_SERVICE_URL = os.getenv('ORDER_SERVICE_URL_DOCKER', 'http://order_service:7001/api/orders/')
+    PAYMENT_SERVICE_URL = os.getenv('PAYMENT_SERVICE_URL_DOCKER', 'http://payment_service:7002/api/payments')
+else:
+    ORDER_SERVICE_URL = os.getenv('ORDER_SERVICE_URL_LOCAL', 'http://127.0.0.1:7001/api/orders/')
+    PAYMENT_SERVICE_URL = os.getenv('PAYMENT_SERVICE_URL_LOCAL', 'http://127.0.0.1:7002/api/payments')
 
 def view_orders(request):
     customer_id = request.user.id  # Giả sử bạn có thông tin user trong request

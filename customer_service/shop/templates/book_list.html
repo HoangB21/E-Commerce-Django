@@ -21,8 +21,8 @@
         {% for book in books %}
         <div class="col-md-4 mb-4">
             <div class="card h-100 shadow-sm">
-                {% if book.image %}
-                <img src="{{ book.image }}" class="card-img-top" alt="{{ book.name }}"
+                {% if book.image_url %}
+                <img src="{{ book.image_url }}" class="card-img-top" alt="{{ book.name }}"
                     style="height: 300px; object-fit: contain; background-color: rgb(238, 238, 238);">
                 {% else %}
                 <img src="{% static 'images/default_book_cover.jpg' %}" class="card-img-top" alt="No Image"
